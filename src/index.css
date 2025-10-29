@@ -1,0 +1,42 @@
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+}
+
+.app-container {
+  overflow-x: hidden;
+  background-color: #f4f4f9;
+}
+
+.content {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.zoom-controls {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+}
+
+.zoom-controls button {
+  background: none;
+  border: 1px solid #fff;
+  color: white;
+  padding: 5px 10px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.zoom-controls button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+

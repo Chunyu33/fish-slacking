@@ -1,0 +1,25 @@
+.setting-menu {
+  position: absolute;
+  top: 35px;
+  right: 10px;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 180px;
+  z-index: 1000;
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #444;
+  margin: 8px 0;
+}
+
+.setting-row input[type="range"] {
+  width: 80px;
+}
