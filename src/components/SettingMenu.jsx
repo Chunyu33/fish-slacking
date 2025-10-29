@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./css/setting.css";
 
 const SettingMenu = ({ onClose }) => {
@@ -6,9 +6,15 @@ const SettingMenu = ({ onClose }) => {
   const [opacity, setOpacity] = useState(0.9);
   const [scale, setScale] = useState(1.0);
 
+  // 打开设置时从主进程获取最新自动隐藏状态
+  useEffect(() => {
+    window.electronAPI.getAutoHide().then((enabled) => setAutoHide(enabled));
+  }, []);
+
   const handleAutoHide = (e) => {
-    setAutoHide(e.target.checked);
-    window.electronAPI?.setAutoHide?.(e.target.checked);
+    const isChecked = e.target.checked;
+    setAutoHide(isChecked);
+    window.electronAPI?.setAutoHide?.(isChecked);
   };
 
   const handleOpacity = (e) => {

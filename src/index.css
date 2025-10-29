@@ -16,27 +16,19 @@ html, body {
   text-align: center;
 }
 
-.zoom-controls {
+.auto-hide-toggle {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  bottom: 20px;
+  left: 20px;
   background: rgba(0, 0, 0, 0.5);
   padding: 10px;
   border-radius: 5px;
   color: white;
 }
 
-.zoom-controls button {
-  background: none;
-  border: 1px solid #fff;
-  color: white;
-  padding: 5px 10px;
-  margin: 5px;
+.auto-hide-toggle label {
+  font-size: 14px;
   cursor: pointer;
-  border-radius: 3px;
 }
 
-.zoom-controls button:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
 

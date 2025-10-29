@@ -1,46 +1,94 @@
 let mainWindow = null;
-let hideTimeout = null;
-let fishMode = false;
+let autoHideEnabled = true;
+let hideTimer = null;
+
+let mouseInside = true;
 
 function setMainWindow(win) {
   mainWindow = win;
 
-  mainWindow.on('blur', () => {
-    if (fishMode) {
-      if (hideTimeout) clearTimeout(hideTimeout);
-      hideTimeout = setTimeout(() => mainWindow.hide(), 500);
-    }
-  });
-
   mainWindow.on('show', () => {
-    if (hideTimeout) clearTimeout(hideTimeout);
+    mouseInside = true;
+    clearHideTimer();
+    if (autoHideEnabled) startHideTimer(5000); // 刚打开延迟 5s
+  });
+
+  mainWindow.on('focus', () => {
+    mouseInside = true;
+    clearHideTimer();
+  });
+
+  mainWindow.on('blur', () => {
+    mouseInside = false;
+    if (autoHideEnabled) hideImmediately();
   });
 }
 
-function setFishMode(enabled) {
-  fishMode = enabled;
+// 启动延迟隐藏
+function startHideTimer(ms = 5000) {
+  clearHideTimer();
+  hideTimer = setTimeout(() => {
+    if (!mouseInside && autoHideEnabled) mainWindow?.hide();
+  }, ms);
 }
 
-function hideWindow(ms = 0) {
-  if (!mainWindow) return;
-  if (hideTimeout) clearTimeout(hideTimeout);
-  hideTimeout = setTimeout(() => mainWindow.hide(), ms);
+// 立即隐藏
+function hideImmediately() {
+  clearHideTimer();
+  if (autoHideEnabled) mainWindow?.hide();
+}
+
+// 暂停隐藏定时器
+function pauseHideTimer() {
+  clearHideTimer();
+}
+
+// 恢复隐藏定时器
+function resumeHideTimer(ms = 5000) {
+  if (autoHideEnabled) startHideTimer(ms);
+}
+
+function clearHideTimer() {
+  if (hideTimer) {
+    clearTimeout(hideTimer);
+    hideTimer = null;
+  }
 }
 
 function showWindow() {
-  if (!mainWindow) return;
-  mainWindow.show();
+  mainWindow?.show();
+  mouseInside = true;
+  if (autoHideEnabled) startHideTimer(5000);
+}
+
+function hideWindow(ms = 0) {
+  if (!autoHideEnabled) return;
+  if (ms <= 0) hideImmediately();
+  else startHideTimer(ms);
+}
+
+function setAutoHide(enabled) {
+  autoHideEnabled = enabled;
+  if (!enabled) clearHideTimer();
+}
+
+function getAutoHideState() {
+  return autoHideEnabled;
 }
 
 function setOpacity(val = 1) {
-  if (!mainWindow) return;
-  mainWindow.setOpacity(val);
+  mainWindow?.setOpacity(val);
 }
 
 module.exports = {
   setMainWindow,
-  hideWindow,
   showWindow,
+  hideWindow,
+  startHideTimer,
+  pauseHideTimer,
+  resumeHideTimer,
+  setAutoHide,
+  getAutoHideState,
+  hideImmediately,
   setOpacity,
-  setFishMode,
 };

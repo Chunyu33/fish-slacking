@@ -1,42 +1,40 @@
-import React, { useEffect, useRef } from 'react';
-import Header from './components/Header';
+import React, { useEffect, useState } from "react";
+import Header from "./components/Header";
 
 const App = () => {
-  const hideTimer = useRef(null);
+  const [autoHide, setAutoHide] = useState(true);
+
+  // 获取 autoHide 状态
+  useEffect(() => {
+    window.electronAPI?.getAutoHide?.().then(setAutoHide);
+  }, []);
 
   useEffect(() => {
-    const handleMouseLeave = () => {
-      hideTimer.current = setTimeout(() => {
-        window.electronAPI?.hideWindow?.(0);
-      }, 2000); // 鼠标离开 2s 后隐藏
-    };
-
     const handleMouseEnter = () => {
-      if (hideTimer.current) clearTimeout(hideTimer.current);
       window.electronAPI?.showWindow?.();
     };
 
-    window.addEventListener('mouseleave', handleMouseLeave);
-    window.addEventListener('mouseenter', handleMouseEnter);
+    const handleMouseLeave = () => {
+      if (autoHide) window.electronAPI?.hideWindow?.(0);
+    };
+
+    window.addEventListener("mouseenter", handleMouseEnter);
+    window.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
-      window.removeEventListener('mouseleave', handleMouseLeave);
-      window.removeEventListener('mouseenter', handleMouseEnter);
+      window.removeEventListener("mouseenter", handleMouseEnter);
+      window.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, []);
+  }, [autoHide]);
 
   return (
     <div className="app-container">
       <Header />
-      <iframe
+      {/* <iframe
         src="https://www.bing.com"
         title="Bing"
-        style={{
-          border: 'none',
-          width: '100%',
-          height: 'calc(100vh - 55px)',
-        }}
-      />
+        style={{ border: "none", width: "100%", height: "calc(100vh - 35px)" }}
+      /> */}
     </div>
   );
 };
