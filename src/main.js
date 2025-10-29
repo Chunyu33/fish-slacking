@@ -8,6 +8,7 @@ const {
   getAutoHideState,
   setOpacity,
   hideImmediately,
+  initAutoHideWatcher, // ✅ 新增
 } = require('./main/windowControl');
 
 if (require('electron-squirrel-startup')) app.quit();
@@ -36,6 +37,7 @@ const createWindow = () => {
   if (isDev) mainWindow.webContents.openDevTools();
 
   setMainWindow(mainWindow);
+  initAutoHideWatcher(); // ✅ 初始化自动隐藏检测逻辑
 };
 
 const createTray = () => {
