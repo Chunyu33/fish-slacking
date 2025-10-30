@@ -7,8 +7,9 @@ const {
   setAutoHide,
   getAutoHideState,
   setOpacity,
+  clearAllTimer,
   hideImmediately,
-  initAutoHideWatcher, // ✅ 新增
+  initAutoHideWatcher,
 } = require('./main/windowControl');
 
 if (require('electron-squirrel-startup')) app.quit();
@@ -37,7 +38,7 @@ const createWindow = () => {
   if (isDev) mainWindow.webContents.openDevTools();
 
   setMainWindow(mainWindow);
-  initAutoHideWatcher(); // ✅ 初始化自动隐藏检测逻辑
+  // initAutoHideWatcher(); // ✅ 初始化自动隐藏检测逻辑
 };
 
 const createTray = () => {
@@ -64,7 +65,10 @@ ipcMain.handle('show-window', () => showWindow());
 ipcMain.handle('minimize-window', () => mainWindow?.minimize());
 ipcMain.handle('close-window', () => mainWindow?.close());
 ipcMain.handle('set-opacity', (_, val) => setOpacity(val));
-ipcMain.handle('set-auto-hide', (_, enabled) => setAutoHide(enabled));
+ipcMain.handle('set-auto-hide', (_, args) => {
+  const { enabled, count } = args || {};
+  setAutoHide(enabled, count);
+});
 ipcMain.handle('get-auto-hide', () => getAutoHideState());
 
 app.whenReady().then(() => {
@@ -75,8 +79,10 @@ app.whenReady().then(() => {
   globalShortcut.register('Alt+F', () => {
     console.log('\n\n globalShortcut.register \n')
     if (mainWindow && !mainWindow.isVisible()) {
-      showWindow();
-      initAutoHideWatcher();
+      showWindow(100);
+    } else {
+      hideImmediately();
+      clearAllTimer();
     }
   });
 

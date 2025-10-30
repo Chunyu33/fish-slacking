@@ -14,7 +14,7 @@ const SettingMenu = ({ onClose }) => {
   const handleAutoHide = (e) => {
     const isChecked = e.target.checked;
     setAutoHide(isChecked);
-    window.electronAPI?.setAutoHide?.(isChecked);
+    window.electronAPI?.setAutoHide?.(isChecked, 200);
   };
 
   const handleOpacity = (e) => {

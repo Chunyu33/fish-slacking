@@ -1,4 +1,4 @@
-const { screen } = require('electron');
+const { screen } = require("electron");
 
 let mainWindow = null;
 let autoHideEnabled = true;
@@ -15,7 +15,8 @@ function setMainWindow(win) {
 }
 
 // 设置自动隐藏开关
-function setAutoHide(enabled) {
+function setAutoHide(enabled, count) {
+  console.log('\n config----', enabled, '===count===', count)
   autoHideEnabled = enabled;
   if (!enabled) {
     clearInterval(checkTimer);
@@ -25,7 +26,7 @@ function setAutoHide(enabled) {
       isWindowVisible = true;
     }
   } else {
-    initAutoHideWatcher(); // 重新启动检测逻辑
+    initAutoHideWatcher(count); // 重新启动检测逻辑
   }
 }
 
@@ -34,7 +35,7 @@ function getAutoHideState() {
 }
 
 // 显示窗口
-function showWindow() {
+function showWindow(customCountDown = undefined) {
   if (mainWindow && !mainWindow.isDestroyed()) {
     // mainWindow.show(); // 抢焦点
     mainWindow.showInactive(); // 不抢焦点
@@ -44,9 +45,11 @@ function showWindow() {
     if (autoHideEnabled) {
       clearTimeout(startupTimer);
       startupTimer = setTimeout(() => {
-        console.log(`\n ⏳ Mouse status monitoring will begin ${COUNTDOWN} seconds after startup.`);
+        console.log(
+          `\n ⏳ Mouse status monitoring will begin ${COUNTDOWN} seconds after startup.`
+        );
         startMouseWatcher();
-      }, COUNTDOWN);
+      }, customCountDown ?? COUNTDOWN);
     }
   }
 }
@@ -111,17 +114,25 @@ function startMouseWatcher() {
   }, 200);
 }
 
-function initAutoHideWatcher() {
+// 清除定时器
+function clearAllTimer() {
+  clearInterval(checkTimer);
+  clearTimeout(startupTimer);
+}
+
+function initAutoHideWatcher(customCountDown = undefined) {
   clearInterval(checkTimer);
   clearTimeout(startupTimer);
 
   if (!autoHideEnabled) return;
 
   // 应用启动后x秒才启用检测
-  console.log(`\n🚀 initAutoHideWatcher ${COUNTDOWN} secends，active mouse check...`);
+  console.log(
+    `\n🚀 initAutoHideWatcher ${COUNTDOWN} secends，active mouse check...`
+  );
   startupTimer = setTimeout(() => {
     startMouseWatcher();
-  }, COUNTDOWN);
+  }, customCountDown ?? COUNTDOWN);
 }
 
 module.exports = {
@@ -133,4 +144,5 @@ module.exports = {
   setOpacity,
   hideImmediately,
   initAutoHideWatcher,
+  clearAllTimer,
 };
