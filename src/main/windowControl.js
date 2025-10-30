@@ -7,6 +7,8 @@ let checkTimer = null;
 let startupTimer = null;
 let lastCursorInside = true;
 
+const COUNTDOWN = 3500; // 倒计时
+
 // 设置主窗口引用
 function setMainWindow(win) {
   mainWindow = win;
@@ -34,16 +36,17 @@ function getAutoHideState() {
 // 显示窗口
 function showWindow() {
   if (mainWindow && !mainWindow.isDestroyed()) {
+    // mainWindow.show(); // 抢焦点
     mainWindow.showInactive(); // 不抢焦点
     isWindowVisible = true;
 
-    // 重新启动5秒定时器
+    // 重新启动 秒定时器
     if (autoHideEnabled) {
       clearTimeout(startupTimer);
       startupTimer = setTimeout(() => {
-        console.log('⏳ 启动5秒后开始监控鼠标状态');
+        console.log(`\n ⏳ Mouse status monitoring will begin ${COUNTDOWN} seconds after startup.`);
         startMouseWatcher();
-      }, 5000);
+      }, COUNTDOWN);
     }
   }
 }
@@ -90,12 +93,14 @@ function startMouseWatcher() {
 
     if (isInside && !lastCursorInside) {
       lastCursorInside = true;
+      // 鼠标在窗口位置范围内
       if (!isWindowVisible) {
-        mainWindow.showInactive();
-        isWindowVisible = true;
+        // mainWindow.showInactive();
+        // isWindowVisible = true;
         console.log("🟢 in -> show");
       }
     } else if (!isInside && lastCursorInside) {
+      // 鼠标不在窗口位置范围内
       lastCursorInside = false;
       if (isWindowVisible) {
         mainWindow.hide();
@@ -112,11 +117,11 @@ function initAutoHideWatcher() {
 
   if (!autoHideEnabled) return;
 
-  // 应用启动后5秒才启用检测
+  // 应用启动后x秒才启用检测
+  console.log(`\n🚀 initAutoHideWatcher ${COUNTDOWN} secends，active mouse check...`);
   startupTimer = setTimeout(() => {
-    console.log('🚀 启动后5秒，开启鼠标检测');
     startMouseWatcher();
-  }, 5000);
+  }, COUNTDOWN);
 }
 
 module.exports = {

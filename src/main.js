@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, screen } = require('electron');
+const { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, screen, globalShortcut } = require('electron');
 const path = require('node:path');
 const {
   setMainWindow,
@@ -71,9 +71,23 @@ app.whenReady().then(() => {
   createWindow();
   createTray();
 
+  // 注册全局快捷键 Alt+F 唤醒窗口
+  globalShortcut.register('Alt+F', () => {
+    console.log('\n\n globalShortcut.register \n')
+    if (mainWindow && !mainWindow.isVisible()) {
+      showWindow();
+      initAutoHideWatcher();
+    }
+  });
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
+});
+
+// 清理快捷键
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll();
 });
 
 app.on('window-all-closed', () => {
