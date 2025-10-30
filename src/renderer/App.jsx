@@ -1,34 +1,26 @@
 import React, { useEffect, useState } from "react";
 import Header from "./components/Header";
+import SettingMenu from "./components/SettingMenu";
 
 const App = () => {
-  const [autoHide, setAutoHide] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
 
-  // 从主进程获取 autoHide 状态
+  // 初始化时从 store 获取自动隐藏状态
   useEffect(() => {
     window.electronAPI?.getAutoHide?.().then((enabled) => {
-      setAutoHide(enabled);
+      console.log("AutoHide initial:", enabled);
     });
   }, []);
 
-  // 当 autoHide 改变时，通知主进程
-  useEffect(() => {
-    window.electronAPI?.setAutoHide?.(autoHide);
-  }, [autoHide]);
+  // 全局快捷键 Alt+F 在主进程已注册，这里不需要
+  // 这里只管理设置菜单展示和页面嵌入 iframe
 
   return (
     <div className="app-container">
-      <Header />
-      {/* ✅ 这里可以自由放页面内容 */}
-      {/* <iframe
-        src="https://www.bing.com"
-        title="Bing"
-        style={{
-          border: "none",
-          width: "100%",
-          height: "calc(100vh - 35px)",
-        }}
-      /> */}
+      <Header onOpenSettings={() => setShowSettings(true)} />
+      {showSettings && (
+        <SettingMenu onClose={() => setShowSettings(false)} />
+      )}
     </div>
   );
 };

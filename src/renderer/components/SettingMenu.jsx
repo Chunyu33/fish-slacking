@@ -6,27 +6,39 @@ const SettingMenu = ({ onClose }) => {
   const [opacity, setOpacity] = useState(0.9);
   const [scale, setScale] = useState(1.0);
 
-  // 打开设置时从主进程获取最新自动隐藏状态
+  // 打开设置时从主进程获取最新状态
   useEffect(() => {
-    window.electronAPI.getAutoHide().then((enabled) => setAutoHide(enabled));
+    const fetchSettings = async () => {
+      const [auto, op, sc] = await Promise.all([
+        window.electronAPI.getAutoHide?.(),
+        window.electronAPI.getOpacity?.(),
+        window.electronAPI.getScale?.(),
+      ]);
+      console.log(auto, op, sc, '-----store')
+      if (auto !== undefined) setAutoHide(auto);
+      if (op !== undefined) setOpacity(op);
+      if (sc !== undefined) setScale(sc);
+    };
+    fetchSettings();
   }, []);
 
   const handleAutoHide = (e) => {
     const isChecked = e.target.checked;
     setAutoHide(isChecked);
+    // 更新主进程 store 并触发自动隐藏逻辑
     window.electronAPI?.setAutoHide?.(isChecked, 200);
   };
 
   const handleOpacity = (e) => {
     const val = parseFloat(e.target.value);
     setOpacity(val);
-    window.electronAPI?.setOpacity?.(val);
+    window.electronAPI?.setOpacity?.(val); // 更新 store 并立即设置窗口透明度
   };
 
   const handleScale = (e) => {
     const val = parseFloat(e.target.value);
     setScale(val);
-    window.electronAPI?.setZoom?.(val);
+    window.electronAPI?.setScale?.(val); // 更新 store 并触发窗口缩放
   };
 
   return (

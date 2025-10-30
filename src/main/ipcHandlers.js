@@ -1,34 +1,33 @@
-const { ipcMain } = require('electron');
-const store = require('./store');
-const windowControl = require('./windowControl');
+const {
+  showWindow,
+  hideWindow,
+  hideImmediately,
+  setAutoHide,
+  getAutoHideState,
+  setOpacity,
+  setScale,
+  clearAllTimer,
+} = require("./windowControl");
 
-function registerIpcHandlers() {
-  // 获取自动隐藏状态
-  ipcMain.handle('get-auto-hide', () => windowControl.getAutoHideState());
-
-  // 设置自动隐藏
-  ipcMain.handle('set-auto-hide', (_, args) => {
+function registerIPC(ipcMain) {
+  ipcMain.handle("minimize-window", () => hideWindow());
+  ipcMain.handle("show-window", () => showWindow());
+  ipcMain.handle("hide-window", (_, ms) => hideWindow(ms));
+  ipcMain.handle("hide-immediately", () => hideImmediately());
+  ipcMain.handle("set-auto-hide", (_, args) => {
     const { enabled, count } = args || {};
-    store.set('autoHide', enabled);
-    windowControl.setAutoHide(enabled, count);
+    setAutoHide(enabled, count);
   });
-
-  // 设置透明度
-  ipcMain.handle('set-opacity', (_, val) => {
-    store.set('opacity', val);
-    windowControl.setOpacity(val);
+  ipcMain.handle("get-auto-hide", () => getAutoHideState());
+  ipcMain.handle("set-opacity", (_, val) => setOpacity(val));
+  ipcMain.handle("get-opacity", () => require("./store").get("opacity"));
+  ipcMain.handle("set-scale", (_, val) => setScale(val));
+  ipcMain.handle("get-scale", () => require("./store").get("scale"));
+  ipcMain.handle("close-window", (_, args) => {
+    if (args?.force) process.exit(0);
+    else hideWindow();
+    // process.exit(0);
   });
-
-  // 设置缩放
-  ipcMain.handle('set-zoom', (_, val) => {
-    store.set('scale', val);
-    windowControl.setZoom(val);
-  });
-
-  // 窗口控制
-  ipcMain.handle('show-window', () => windowControl.showWindow());
-  ipcMain.handle('hide-window', (_, ms) => windowControl.hideWindow(ms));
-  ipcMain.handle('hide-immediately', () => windowControl.hideImmediately());
 }
 
-module.exports = { registerIpcHandlers };
+module.exports = registerIPC;
