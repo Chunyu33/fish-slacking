@@ -1,5 +1,5 @@
 {
-  "name": "fish-Slacke",
+  "name": "fish-slacke",
   "productName": "fish-Slacke",
   "version": "1.0.0",
   "description": "My Electron application description",
@@ -37,6 +37,7 @@
     "style-loader": "^3.3.4"
   },
   "dependencies": {
+    "antd": "^5.27.6",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^11.0.2",
     "react": "^19.2.0",
