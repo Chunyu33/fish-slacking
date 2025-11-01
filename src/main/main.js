@@ -59,7 +59,7 @@ const createTray = () => {
     },
   ]);
 
-  tray.setToolTip("Fish Stealth");
+  tray.setToolTip("Fish Slacke");
   tray.setContextMenu(contextMenu);
 
   tray.on("click", () =>
